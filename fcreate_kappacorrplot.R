@@ -52,7 +52,7 @@ fcreate_kappacorrplot <- function(sol, name_sol) {
   
   # creating corrplot
   rownames(matrix_final) <- matrix_final[,1]
-  n <- length(s_list) + 1 # 4 is the number of inputted scenarios
+  n <- length(s_list) + 1
   matrix <- matrix_final[,2:n]
   class(matrix) <- "numeric"
   
