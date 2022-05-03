@@ -1,6 +1,8 @@
 #2022-05-03
 #Dabalà Alvise from a function of Tin Buenafe
 
+#The function produce a correlation plot of Cohen's Kappa between a list of priotitizr solutions
+
 #sol: list of solutions
 #name_sol: list of the names of the different solution that will be visualised in
 #          the final plot
