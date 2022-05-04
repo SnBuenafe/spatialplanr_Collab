@@ -56,7 +56,7 @@ fcreate_kappacorrplot <- function(sol, name_sol) {
   matrix <- matrix_final1[,2:n]
   class(matrix_final2) <- "numeric"
   
-  plot() <- function() {
+  plot <- function() {
     col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
     corrplot(matrix_final2, method = "shade", tl.col = "black", addCoef.col = "black",
                      col=col(200), tl.srt=45)
