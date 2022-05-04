@@ -9,6 +9,7 @@
 # the values represent the values that we want frequency distributions of (e.g. % of features, ecosystem benefit)
 # - values under the rows column indicate the feature name or planning unit number
 # 2. palette: group names with the colors as a vector list
+# e.g. palette <- c(`EM-Percentile-tos-126` = "#289E3D", `EM-Percentile-tos-245` = "#E6C173", `EM-Percentile-tos-585` = "#855600")
 
 # Output:
 # ggplot of kernel density plot which you can manipulate just as you would a ggplot object
