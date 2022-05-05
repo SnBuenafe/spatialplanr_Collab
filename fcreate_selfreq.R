@@ -1,60 +1,57 @@
 # Author: Tin Buenafe
 # Last Updated: 05-05-22
 
-# Create low regret areas for specific approach
-create_LowRegretSf <- function(solution_list, col_names, PUs, scenario = FALSE) {
+# Purpose: Create selection frequency plots for a list of solutions
+# Input:
+# 1. sol : list of solutions
+# 2. names : desired column names of each of the solutions in the output object
+# 3. PlanUnits : sf of the planning units
+# Output:
+# list of two items
+# $low_regret : sf object, with each of the solutions as columns, selection as the # of times the planning unit was selected
+# $plot : selection frequency plot
+
+fcreate_selfreq <- function(sol, names, PlanUnits) {
+  
+  library(sf)
+  library(tidyverse)
+  library(dplyr)
+  library(magrittr)
+  library(ggplot2)
+  
+  PlanUnits %<>% dplyr::mutate(cellID = row_number())
   
   df <- list() # empty list
-  for (i in 1:length(col_names)) {
-    df[[i]] <- solution_list[[i]] %>% dplyr::select(solution_1) %>% 
-      rename(!!sym(col_names[i]) := solution_1) %>% 
+  for(i in 1:length(names)) {
+    df[[i]] <- sol[[i]] %>% dplyr::select(solution_1) %>% 
+      dplyr::rename(!!sym(names[i]) := solution_1) %>% 
       as_tibble()
   }
   
   tmp <- df[[1]]
-  for (i in 2:length(col_names)) {
+  for (i in 2:length(names)) {
     tmp <- tmp %>% 
       left_join(df[[i]], .)
   }
   
-  tmp %<>% dplyr::select(-geometry) %>% 
+  # Create low-regret sf object
+  low_regret <- tmp %>% 
+    dplyr::select(-geometry) %>% 
     mutate(selection = rowSums(., na.rm = TRUE)) %>% 
-    dplyr::mutate(cellID = row_number())
+    dplyr::mutate(cellID = row_number()) %>% 
+    full_join(., PlanUnits, by = "cellID") %>% 
+    st_as_sf(sf_column_name = "geometry")
   
-  PUs_temp <- PUs %>% 
-    dplyr::mutate(cellID = row_number())
+  length = length(names)
   
-  # Create the low-regret sf object
-  low_regret <- full_join(tmp, PUs_temp, by = "cellID") %>% 
-    st_as_sf(sf_column_name = "geometry") %>% 
-    left_join(., UniformCost %>% as_tibble(), by = "geometry") %>% 
-    st_as_sf(sf_column_name = "geometry") 
-  
-  if (isTRUE(scenario)) {
-    low_regret %<>% 
-      dplyr::mutate(solution_1 = ifelse(selection == 3, 1, 0))
-  } else {
-    low_regret %<>% 
-      dplyr::mutate(solution_1 = ifelse(selection == 4, 1, 0))    
-  }
-  
-  return(low_regret)
-}
-
-plot_SelectionFrequency <- function(data, land) {
-  gg <- ggplot() + geom_sf(data = data, aes(fill = as.factor(selection)), color = NA, size = 0.01) +
-    geom_sf(data = land, color = "grey20", fill = "grey20", alpha = 0.9, size = 0.1, show.legend = FALSE) +
-    coord_sf(xlim = st_bbox(data)$xlim, ylim = st_bbox(data)$ylim) +
+  ggSelFreq <- ggplot() +
+    geom_sf(data = low_regret, aes(fill = as.factor(selection)), color = NA, size = 0.01) +
+    coord_sf(xlim = st_bbox(low_regret)$xlim, ylim = st_bbox(low_regret)$ylim) +
     scale_fill_brewer(name = "Selection Frequency",
                       palette = "PuBu", aesthetics = "fill") +
-    theme_bw() +
-    labs(subtitle = "Variability in GCMs")
+    theme_bw()
+  
+  object <- list(low_regret = low_regret, plot = ggSelFreq)
+  
+  return(object)
 }
-
-sFreq <- create_LowRegretSf(solution_list, names, PUs)
-saveRDS(sFreq, paste0(output_lowregret, "sFreq3-EM-Percentile-585.rds")) # save low-regret solution
-(ggFreq <- plot_SelectionFrequency(sFreq, land) + ggtitle("Metric Theme", subtitle = "Percentile (SSP 5-8.5)") + theme(axis.text = element_text(size = 25)))
-ggsave(filename = "Freq-Percentile-Ensemble-tos-585.png",
-       plot = ggFreq, width = 21, height = 29.7, dpi = 300,
-       path = "Figures/") # save plot
-
