@@ -1,3 +1,6 @@
+# Author: Tin Buenafe
+# Last updated: 06-07-22
+
 # Load packages
 library(tidyverse)
 # Code is adapted from: https://r-graph-gallery.com/circular-barplot.html
