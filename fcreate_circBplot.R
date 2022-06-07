@@ -1,12 +1,18 @@
 # Load packages
 library(tidyverse)
 # Code is adapted from: https://r-graph-gallery.com/circular-barplot.html
-
-# INPUTS:
 # df should have the following feature, value, group
 # group colors
 # group legends
 
+# ----- Functions for creating circular barplot -----
+# Inputs:
+# 1. df: data frame should have the following column names: feature, value, group
+# feature: individual bars
+# value: value plotted in the y-axis
+# group: grouping factors
+# 2. legend_color: vector list of colors; should have the group names and their corresponding colors
+# 3. legend_list: list of groups/legends of groups
 fcreate_circBplot <- function(df, legend_color, legend_list) {
   
   # Adding rows to each group, creating space between the groups
@@ -122,6 +128,7 @@ fcreate_circBplot <- function(df, legend_color, legend_list) {
   return(p)
 }
 
+# ----- Example df -----
 colors <- c('grp1' = 'darkseagreen', 'grp2' = 'tan3', 
                   'grp3' = 'salmon4', 'grp4' = 'grey30')
 legends <- c('1', '2', '3', '4')
