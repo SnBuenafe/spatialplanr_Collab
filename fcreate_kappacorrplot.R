@@ -51,14 +51,14 @@ fcreate_kappacorrplot <- function(sol, name_sol) {
     as_tibble()
   
   # creating corrplot
-  rownames(matrix_final1) <- matrix_final1[,1]
+  rownames(matrix_final) <- matrix_final[,1]
   n <- length(s_list) + 1 # 4 is the number of inputted scenarios
-  matrix <- matrix_final1[,2:n]
-  class(matrix_final2) <- "numeric"
+  matrix <- matrix_final[,2:n]
+  class(matrix) <- "numeric"
   
   plot <- function() {
     col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
-    corrplot(matrix_final2, method = "shade", tl.col = "black", addCoef.col = "black",
+    corrplot(matrix, method = "shade", tl.col = "black", addCoef.col = "black",
                      col=col(200), tl.srt=45)
   }
   
